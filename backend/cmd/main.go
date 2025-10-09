@@ -8,6 +8,8 @@ import (
 
 	"github.com/automation/backend/db"
 	cors "github.com/automation/backend/internal/middlewares"
+	"github.com/automation/backend/internal/routes"
+	"github.com/gin-gonic/gin"
 	"github.com/pressly/goose/v3"
 )
 
@@ -25,19 +27,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := goose.Up(db.GetDB(), "./migrations"); err != nil {
-		log.Fatalf("failed to run migrations: %v", err)
-	}
+	// if err := goose.Up(GetDB(), "./migrations"); err != nil {
+	// 	log.Fatalf("failed to run migrations: %v", err)
+	// }
 
-	// Simple example handler
-	mux := http.NewServeMux()
-	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "pong")
+	r := gin.Default()
+	r.Use(cors.CORSMiddleware())
+	r.GET("/ping", func(c *gin.Context) {
+		c.String(200, "pong")
 	})
 
-	// Apply CORS middleware
-	handler := cors.EnableCORS(mux)
-
+	// Grouped routes
+	api := r.Group("/api")
+	routes.RegisterResumeRoutes(api)
 	fmt.Println("Server running at http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080", handler))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }

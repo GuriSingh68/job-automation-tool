@@ -1,5 +1,11 @@
 package types
 
+import (
+	"fmt"
+	"path/filepath"
+	"strings"
+)
+
 type Resume struct {
 	ID       int64               `json:"id" db:"id"`
 	FilePath string              `json:"file_path" db:"file_path"`
@@ -66,4 +72,21 @@ type ParsedResume struct {
 	Raw      map[string]string      `json:"raw"`
 	Sections map[string]interface{} `json:"sections"`
 	Metadata map[string]string      `json:"metadata"`
+}
+
+var AllowedExts = map[string]bool{
+	".pdf": true,
+}
+
+var AllowedMIMEs = map[string]bool{
+	"application/pdf": true,
+}
+
+// ValidateHeaderAndName returns nil for allowed files (pdf/docx) or an error describing the problem.
+func ValidateHeaderAndName(filextension string) error {
+	ext := strings.ToLower(filepath.Ext(filextension))
+	if !AllowedExts[ext] {
+		return fmt.Errorf("unsupported file type: %s", ext)
+	}
+	return nil
 }

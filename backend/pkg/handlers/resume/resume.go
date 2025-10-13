@@ -10,6 +10,7 @@ import (
 
 	"github.com/automation/backend/db"
 	errors "github.com/automation/backend/pkg/error"
+	"github.com/automation/backend/pkg/types"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,6 +27,19 @@ func UploadResumeHandler(c *gin.Context) {
 	file, err := c.FormFile("resume")
 	if err != nil {
 		errors.HandleError(c, errors.BadRequest("missing resume file"))
+		return
+	}
+	const maxSize = 10 << 20 // 10MB
+	if file.Size > maxSize {
+		errors.HandleError(c, errors.BadRequest("file too large (max 10MB)"))
+		return
+	}
+
+	// inspect content type from the uploaded file header
+	fileExtension := filepath.Ext(file.Filename)
+	log.Printf("File extension %s", fileExtension)
+	if err := types.ValidateHeaderAndName(fileExtension); err != nil {
+		errors.HandleError(c, errors.BadRequest(err.Error()))
 		return
 	}
 

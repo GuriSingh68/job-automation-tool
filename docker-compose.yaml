@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: job-automation-backend:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SQLITE_DSN=/app/data/app.db
+      - PORT=8080
+    volumes:
+      # persist uploads directory on host for convenience
+      - ./backend/uploads:/app/uploads
+      # persist sqlite DB in a named volume
+      - backend_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  backend_data:

@@ -8,7 +8,7 @@ import (
 func RegisterResumeRoutes(rg *gin.RouterGroup) {
 	resume := rg.Group("/resume")
 	{
-		//resume.POST("/upload", handler.UploadResumeHandler)
+		resume.POST("/upload", handlers.UploadResumeHandler)
 		resume.GET("/list", handlers.ListResumesHandler)
 	}
 }

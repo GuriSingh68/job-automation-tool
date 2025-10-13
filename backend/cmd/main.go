@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// if err := goose.Up(GetDB(), "./migrations"); err != nil {
+	// if err := goose.Up(db.GetDB(), "./backend/db/migrations"); err != nil {
 	// 	log.Fatalf("failed to run migrations: %v", err)
 	// }
 

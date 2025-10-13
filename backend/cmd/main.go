@@ -9,6 +9,7 @@ import (
 	"github.com/automation/backend/db"
 	cors "github.com/automation/backend/internal/middlewares"
 	"github.com/automation/backend/internal/routes"
+	errors "github.com/automation/backend/pkg/error"
 	"github.com/gin-gonic/gin"
 	"github.com/pressly/goose/v3"
 )
@@ -36,7 +37,7 @@ func main() {
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
-
+	r.Use(errors.ErrorHandler())
 	// Grouped routes
 	api := r.Group("/api")
 	routes.RegisterResumeRoutes(api)

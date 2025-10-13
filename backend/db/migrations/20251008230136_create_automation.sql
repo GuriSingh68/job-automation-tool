@@ -53,6 +53,20 @@ CREATE TABLE IF NOT EXISTS logs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (action_id) REFERENCES actions(id)
 );
+CREATE TABLE IF NOT EXISTS preferences (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    preferred_role TEXT NOT NULL,
+    location TEXT NOT NULL,
+    keywords TEXT,                  
+    job_type TEXT ,
+    duration_months INTEGER,                
+    frequency TEXT DEFAULT 'daily', 
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- +goose Down
 DROP TABLE IF EXISTS logs;
 DROP TABLE IF EXISTS actions;

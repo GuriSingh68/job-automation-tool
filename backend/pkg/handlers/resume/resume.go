@@ -173,3 +173,28 @@ func ListResumesHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"resumes": resumes})
 }
+
+func DeleteResume(c *gin.Context) {
+	resumeID := c.Param("id")
+	conn := db.GetDB()
+	if conn == nil {
+		errors.HandleError(c, errors.InternalError("database unavailable", nil))
+		return
+	}
+	query := `DELETE FROM resumes WHERE id = ?`
+	result, err := conn.Exec(query, resumeID)
+	if err != nil {
+		errors.HandleError(c, errors.InternalError("failed to delete resume", err))
+		return
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		errors.HandleError(c, errors.InternalError("failed to get rows affected", err))
+		return
+	}
+	if rowsAffected == 0 {
+		errors.HandleError(c, errors.NotFound("resume not found"))
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "resume deleted successfully"})
+}
